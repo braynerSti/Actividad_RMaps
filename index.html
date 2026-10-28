@@ -1,0 +1,52 @@
+# Importa la librería 'pacman' para poder usar la función 'pacman' que permite instalar paquetes de R.
+# Esta se encargará de instalar los paquetes 'sf' y 'leaflet' si no están instalados y luego de cargarlos al proyecto.
+if (!require(pacman)) install.packages("pacman")
+pacman::p_load(readxl, sf, leaflet)
+
+# Define tres vectores (listas) con las coordenadas de tres puntos en Medellín, Colombia.
+# Cada vector contiene las coordenadas de un punto en particular de manera ordenada.
+# Recuerde que el separador decimal en R es el punto (.) y no la coma (,).
+latitud <- c(6.278171,
+             6.220500,
+             12.207000,
+             11.242230,
+             11.328700,
+             12.589000,
+             5.020900,
+             4.579000,
+             4.637717,
+             2.264310)
+longitudes <- c(-75.497563,
+                -75.176600,
+                -72.174000,
+                -74.213290,
+                -74.037000,
+                -81.690000,
+                -74.010000,
+                -74.300000,
+                -75.491645,
+                -73.814951)
+lugares <- c("Parque Arví, Medellín",
+             "Piedra del Peñol, Guatapé",
+             "Cabo de la Vela, La Guajira",
+             "Parque de los Novios, Santa Marta",
+             "Cabo San Juan, Parque Tayrona",
+             "Johnny Cay, San Andrés",
+             "Catedral de Sal, Zipaquirá", 
+             "Salto del Tequendama",
+             "Valle de Cocora, Quindío", 
+             "Caño Cristales, Meta")
+
+# Crea un data frame (es como una tabla) con los vectores anteriores.
+df <- data.frame(latitud, longitudes, lugares)
+
+# Convierte el data frame en un objeto de tipo 'sf' (simple feature) que contiene los puntos.
+# Podríamos decir algo como que vamos a convertir el texto dentro del dataframe en un objeto geográfico.
+# La función 'st_as_sf' convierte el data frame en un objeto de tipo 'sf' y la función 'coords' indica las columnas que contienen las coordenadas.
+points <- st_as_sf(df, coords = c("longitudes", "latitud"), crs = 4326)
+
+# Crea un mapa interactivo con los puntos anteriores.
+leaflet(points) %>%
+  addTiles() %>%
+  addMarkers(popup = ~lugares) %>%
+  addControl("<h1>Mi primer mapa 🗺o(TヘTo)️</h1>", position = "topright")
